@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,8 +14,40 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/****************---------------Router Admin------------------*******************/
+Route::group(['prefix'=>'admin', 'namespace'=>'Admin'], function(){
+
+    Route::get('login', 'LoginController@showLoginForm')->name('admin.login');
+    Route::post('login', 'LoginController@login')->name('admin.login');
+    Route::get('logout', 'LoginController@logout')->name('admin.logout');
+
+
+
+    Route::group(['middleware' => ['auth:admin']], function (){
+        Route::get('/', 'DashboardController@index')->name('admin.dashboard');
+
+        Route::get('/settings', 'SettingController@index')->name('admin.settings');
+        Route::post('/settings', 'SettingController@update')->name('admin.settings.update');
+    });
+
+});
+
+
+
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+
+
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::view('/admin', 'admin.dashboard.index');
+
+
+
+
+
+
